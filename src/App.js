@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import './styles/App.css';
 import twitterLogo from './assets/twitter-logo.svg';
 
@@ -8,20 +8,45 @@ const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
 
 const App = () => {
 
+	const checkIfWalletIsConnected = () => {
+		const {ethereum} = window;
+
+		if (!ethereum) {
+			console.log("Make sure you have MetaMask!");
+			return;
+		} else {
+			console.log("We have the ethereum object", ethereum);
+		}
+	}
+
+	const renderNotConnectedContainer = () => (
+		<div className="connect-wallet-container">
+			<img src="https://media.giphy.com/media/B64JyuO9G06abQvkqT/giphy.gif" alt="Assassin gif" />
+			<button className="cta-button connect-wallet-button">
+				Connect Wallet
+			</button>
+		</div>
+	)
+
+	useEffect(() => {
+		checkIfWalletIsConnected();
+	}, [])
+
   return (
 		<div className="App">
 			<div className="container">
-
 				<div className="header-container">
 					<header>
-            <div className="left">
-              <p className="title">🐱‍👤 Creed Name Service</p>
-              <p className="subtitle">Your immortal API on the blockchain!</p>
-            </div>
+            			<div className="left">
+              			<p className="title">🐱‍👤 Creed Name Service</p>
+              			<p className="subtitle">Your immortal API on the blockchain!</p>
+            			</div>
 					</header>
 				</div>
 
-        <div className="footer-container">
+				{renderNotConnectedContainer()}
+
+        		<div className="footer-container">
 					<img alt="Twitter Logo" className="twitter-logo" src={twitterLogo} />
 					<a
 						className="footer-text"
