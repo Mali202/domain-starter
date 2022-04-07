@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import './styles/App.css';
 import twitterLogo from './assets/twitter-logo.svg';
 
@@ -8,7 +8,27 @@ const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
 
 const App = () => {
 
-	const checkIfWalletIsConnected = () => {
+	const [currentAccount, setCurrentAccount] = useState('');
+
+	const connectWallet = async () => {
+		try {
+			const { ethereum } = window;
+
+			if (!ethereum) {
+				alert("Get MetaMask -> https://metamask.io/");
+				return;
+			}
+
+			const accounts = await ethereum.request({ method: "eth_requestAccounts" });
+
+			console.log("Connected", accounts[0]);
+			setCurrentAccount(accounts[0]);
+		} catch (error) {
+			console.log(error)
+		}
+	}
+
+	const checkIfWalletIsConnected = async () => {
 		const {ethereum} = window;
 
 		if (!ethereum) {
@@ -17,12 +37,22 @@ const App = () => {
 		} else {
 			console.log("We have the ethereum object", ethereum);
 		}
+
+		const accounts = await ethereum.request({ method: 'eth_accounts' });
+
+		if (accounts.length !== 0) {
+			const account = accounts[0];
+			console.log('Found an authorized account:', account);
+			setCurrentAccount(account);
+		} else {
+			console.log('No authorized account found');
+		}
 	}
 
 	const renderNotConnectedContainer = () => (
 		<div className="connect-wallet-container">
 			<img src="https://media.giphy.com/media/B64JyuO9G06abQvkqT/giphy.gif" alt="Assassin gif" />
-			<button className="cta-button connect-wallet-button">
+			<button onClick={connectWallet} className="cta-button connect-wallet-button">
 				Connect Wallet
 			</button>
 		</div>
@@ -44,7 +74,7 @@ const App = () => {
 					</header>
 				</div>
 
-				{renderNotConnectedContainer()}
+				{!currentAccount && renderNotConnectedContainer()}
 
         		<div className="footer-container">
 					<img alt="Twitter Logo" className="twitter-logo" src={twitterLogo} />
