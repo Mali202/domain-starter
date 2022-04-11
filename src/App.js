@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import './styles/App.css';
 import twitterLogo from './assets/twitter-logo.svg';
 import {ethers} from "ethers";
+import contractAbi from './utils/contractABI.json';
 
 // Constants
 const TWITTER_HANDLE = '_buildspace';
